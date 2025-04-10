@@ -1,24 +1,19 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
+import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
 
-export async function generateStaticParams() {
-  const supabase = await createClient();
-  const { data } = await supabase.from('names_of_god').select('id');
-  return data?.map((row: any) => ({ id: row.id })) || [];
-}
+export default async function Page({ params }: { params: { id: string } }) {
+  const { id } = params;
 
-export default async function NameDetailPage({ params }: { params: { id: string } }) {
-  const supabase = await createClient();
   const { data, error } = await supabase
     .from('names_of_god')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!data || error) return notFound();
 
-  let related = [];
+  let related: any[] = [];
   if (data.related_names?.length) {
     const { data: relatedData } = await supabase
       .from('names_of_god')
@@ -33,18 +28,21 @@ export default async function NameDetailPage({ params }: { params: { id: string 
       <p className="text-gray-700 italic">{data.pronunciation}</p>
       <p className="mt-2 text-lg">Meaning: {data.meaning}</p>
       <p className="mt-1 text-sm">Language: {data.language}</p>
+
       <div className="mt-4">
         <h2 className="font-semibold">Attributes:</h2>
         <ul className="list-disc ml-5 text-sm text-gray-800">
           {data.attribute?.map((attr: string) => <li key={attr}>{attr}</li>)}
         </ul>
       </div>
+
       <div className="mt-4">
         <h2 className="font-semibold">Scripture References:</h2>
         <ul className="list-disc ml-5 text-sm text-blue-600">
           {data.scripture_refs?.map((ref: string) => <li key={ref}>{ref}</li>)}
         </ul>
       </div>
+
       <div className="mt-4 text-sm text-gray-600">
         <p><strong>Context of Use:</strong> {data.context_of_use}</p>
         <p><strong>Divine Personality:</strong> {data.divine_personality}</p>
