@@ -7,6 +7,16 @@ export default function Home({ names }: { names: any[] }) {
   const [query, setQuery] = useState('');
   const [language, setLanguage] = useState<string | null>(null);
 
+  const getTodayName = () => {
+    if (names.length === 0) return null;
+    const today = new Date().getDate(); // 1 to 31
+    const index = today % names.length;
+    return names[index];
+  };
+  
+  const todayName = getTodayName();
+  
+
   const speak = (text: string) => {
     if (typeof window !== 'undefined') {
       const utterance = new SpeechSynthesisUtterance(text);
@@ -28,8 +38,56 @@ export default function Home({ names }: { names: any[] }) {
   });
 
   return (
-    <main className="p-4">
-      <h1 className="text-3xl font-bold mb-4">Names of God Across Cultures</h1>
+    <main>
+      <h1 className="text-3xl font-bold mb-4">NAMES of G_D Across Cultures</h1>
+
+      {todayName && (
+        <div className="mb-6 p-4 border rounded-xl shadow-lg bg-yellow-50 dark:bg-yellow-900/20">
+            <h2 className="text-xl font-bold mb-1">📆 Name of the Day</h2>
+            <p className="text-2xl font-serif font-semibold">{todayName.name}</p>
+            <p className="italic text-sm text-gray-600 dark:text-gray-400">
+            {todayName.pronunciation}
+            </p>
+            <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+            Meaning: {todayName.meaning}
+            </p>
+            <p className="text-xs mt-2 text-gray-500 dark:text-gray-400">
+            Language: {todayName.language}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
+                <button
+                    onClick={() => {
+                    const url = `/names/${todayName.id}`;
+                    navigator.clipboard.writeText(url);
+                    alert("Link copied to clipboard!");
+                    }}
+                    className="text-blue-600 underline"
+                >
+                    📋 Copy link
+                </button>
+
+                <a
+                    href={`https://wa.me/?text=Check out this name of G_D: ${todayName.name} (${todayName.meaning}) – https://nog.knfrmd.com/names/${todayName.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-600 underline"
+                >
+                    🟢 Share on WhatsApp
+                </a>
+
+                <a
+                    href={`https://twitter.com/intent/tweet?text=Name%20of%20the%20Day%3A%20${encodeURIComponent(todayName.name)}%20(${encodeURIComponent(todayName.meaning)})%20%F0%9F%8C%90%0Ahttps://nog.knfrmd.com/names/${todayName.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                >
+                    🐦 Share on X
+                </a>
+
+            </div>
+        </div>
+    )}
+
 
       <input
         type="text"
@@ -62,7 +120,7 @@ export default function Home({ names }: { names: any[] }) {
                 {n.name}
                 <span onClick={(e) => { e.preventDefault(); copy(n.name); }} className="cursor-pointer text-xs text-gray-500">📋</span>
               </h2>
-              <p className="text-sm text-gray-600">Language: {n.language}</p>
+              <p className="text-sm text-gray-600">Language: {n.language.charAt(0).toUpperCase() + n.language.slice(1)}</p>
               <p className="text-sm italic">Meaning: {n.meaning}</p>
             </Link>
             {n.pronunciation && (

@@ -13,7 +13,7 @@ export default async function NamesIndexPage() {
 
   return (
     <main className="p-4">
-      <h1 className="text-2xl font-bold mb-4">All Names of God</h1>
+      <h1 className="text-2xl font-bold mb-4">All NAMES of G_D</h1>
       <ul className="list-disc ml-4">
         {data?.map((n) => (
           <li key={n.id} className="my-1">

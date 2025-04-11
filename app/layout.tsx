@@ -10,27 +10,27 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Names of God Across Cultures",
-  description: "A collection of names of God across different cultures and languages.",
+  title: "NAMES of G_D Across Cultures",
+  description: "A collection of names of G_D across different cultures and languages.",
   openGraph: {
-    title: "Names of God Across Cultures",
-    description: "A collection of names of God across different cultures and languages.",
+    title: "NAMES of G_D Across Cultures",
+    description: "A collection of names of G_D across different cultures and languages.",
     url: defaultUrl,
-    siteName: "Names of God Across Cultures",
+    siteName: "NAMES of G_D Across Cultures",
     images: [
       {
         url: `${defaultUrl}/opengraph-image.png`,
         width: 1200,
         height: 630,
-        alt: "Names of God Across Cultures",
+        alt: "NAMES of G_D Across Cultures",
       },
     ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Names of God Across Cultures",
-    description: "A collection of names of God across different cultures and languages.",
+    title: "NAMES of G_D Across Cultures",
+    description: "A collection of names of G_D across different cultures and languages.",
     images: [`${defaultUrl}/opengraph-image.png`],
     creator: "@vercel",
   },
@@ -79,7 +79,7 @@ export const metadata = {
   },
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "black-translucent",
-  applicationName: "Names of God Across Cultures",
+  applicationName: "NAMES of G_D Across Cultures",
   formatDetection: {  
     telephone: false,
     address: false,
@@ -107,11 +107,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col gap-20 items-center">
+            <div className="flex-1 w-full flex flex-col gap-5 items-center">
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                   <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>Names of God</Link>
+                    <Link href={"/"}>NAMES of G_D</Link>
                   </div>
                 </div>
               </nav>
