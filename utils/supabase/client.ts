@@ -1,9 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Simple lazy initialization without Proxy
-let _client: ReturnType<typeof createClient> | null = null;
+let _client: SupabaseClient | null = null;
 
-function getClient() {
+export function getSupabaseClient(): SupabaseClient {
   if (!_client) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -17,12 +16,14 @@ function getClient() {
   return _client;
 }
 
-// Export object with methods that lazily initialize
-export const supabase = {
-  from: (table: string) => getClient().from(table),
-  auth: {
-    get getSession() { return getClient().auth.getSession.bind(getClient().auth); },
-    get getUser() { return getClient().auth.getUser.bind(getClient().auth); },
+// Create a lazy-initialized proxy that delegates all calls to the real client
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop: string) {
+    const client = getSupabaseClient();
+    const value = (client as any)[prop];
+    if (typeof value === 'function') {
+      return value.bind(client);
+    }
+    return value;
   },
-  rpc: (fn: string, params?: Record<string, unknown>) => getClient().rpc(fn, params as any),
-};
+});
