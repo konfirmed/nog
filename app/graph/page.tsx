@@ -5,7 +5,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Relationship Map | Names of G_D",
   description:
-    "Explore the connections between divine names across Yoruba, Hebrew, and Mandarin traditions.",
+    "Explore the connections between divine names across Yoruba, Hebrew, Welsh, Hindi, Yiddish, Hausa, Wolof, Haitian Creole, Wu Chinese, and Mandarin traditions.",
 };
 
 export default async function GraphPage() {

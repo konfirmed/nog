@@ -1,9 +1,22 @@
 // Graph utilities for transforming database data into graph format
 
+// All supported language types
+export type Language =
+  | "yoruba"
+  | "hebrew"
+  | "welsh"
+  | "hindi"
+  | "yiddish"
+  | "hausa"
+  | "wolof"
+  | "haitian_creole"
+  | "wu_chinese"
+  | "mandarin";
+
 export interface NameRecord {
   id: string;
   name: string;
-  language: "yoruba" | "hebrew" | "mandarin";
+  language: string;
   meaning?: string;
   related_names?: string[];
 }
@@ -11,7 +24,7 @@ export interface NameRecord {
 export interface GraphNode {
   id: string;
   name: string;
-  language: "yoruba" | "hebrew" | "mandarin";
+  language: string;
   meaning: string;
   color: string;
 }
@@ -26,18 +39,32 @@ export interface GraphData {
   links: GraphLink[];
 }
 
-// Color scheme for each language
+// Color scheme for each language (YHWH pattern + Mandarin at end)
 export const LANGUAGE_COLORS: Record<string, string> = {
-  yoruba: "#22c55e", // green-500
-  hebrew: "#3b82f6", // blue-500
-  mandarin: "#ef4444", // red-500
+  yoruba: "#22c55e",        // green-500 (Y)
+  hebrew: "#3b82f6",        // blue-500 (H)
+  welsh: "#ef4444",         // red-500 (W)
+  hindi: "#f97316",         // orange-500 (H)
+  yiddish: "#8b5cf6",       // violet-500 (Y)
+  hausa: "#10b981",         // emerald-500 (H)
+  wolof: "#14b8a6",         // teal-500 (W)
+  haitian_creole: "#0ea5e9", // sky-500 (H)
+  wu_chinese: "#ec4899",    // pink-500 (W)
+  mandarin: "#eab308",      // yellow-500
 };
 
 // Lighter colors for dark mode
 export const LANGUAGE_COLORS_DARK: Record<string, string> = {
-  yoruba: "#4ade80", // green-400
-  hebrew: "#60a5fa", // blue-400
-  mandarin: "#f87171", // red-400
+  yoruba: "#4ade80",        // green-400
+  hebrew: "#60a5fa",        // blue-400
+  welsh: "#f87171",         // red-400
+  hindi: "#fb923c",         // orange-400
+  yiddish: "#a78bfa",       // violet-400
+  hausa: "#34d399",         // emerald-400
+  wolof: "#2dd4bf",         // teal-400
+  haitian_creole: "#38bdf8", // sky-400
+  wu_chinese: "#f472b6",    // pink-400
+  mandarin: "#facc15",      // yellow-400
 };
 
 /**

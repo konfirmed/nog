@@ -20,18 +20,22 @@ const FEATURED_ATTRIBUTES = [
 ];
 
 // All supported languages with display names
+// Ordered in YHWH pattern with Mandarin at the end
 const LANGUAGES: Record<string, string> = {
-  hebrew: 'Hebrew',
-  yoruba: 'Yoruba',
-  mandarin: 'Mandarin',
-  yiddish: 'Yiddish',
-  wolof: 'Wolof',
-  hindi: 'Hindi',
-  wu_chinese: 'Wu Chinese',
-  hausa: 'Hausa',
-  welsh: 'Welsh',
-  haitian_creole: 'Haitian Creole',
+  yoruba: 'Yoruba',           // Y
+  hebrew: 'Hebrew',           // H
+  welsh: 'Welsh',             // W
+  hindi: 'Hindi',             // H
+  yiddish: 'Yiddish',         // Y
+  hausa: 'Hausa',             // H
+  wolof: 'Wolof',             // W
+  haitian_creole: 'Haitian Creole', // H
+  wu_chinese: 'Wu Chinese',   // W
+  mandarin: 'Mandarin',       // (end)
 };
+
+// Ordered language keys for display
+const LANGUAGE_ORDER = Object.keys(LANGUAGES);
 
 const ITEMS_PER_PAGE = 24;
 
@@ -85,11 +89,19 @@ export default function Home({ names }: { names: any[] }) {
     alert('Copied to clipboard');
   };
 
-  // Get unique languages from data
+  // Get unique languages from data, ordered by YHWH pattern
   const availableLanguages = useMemo(() => {
     const langSet = new Set<string>();
     names.forEach((n) => langSet.add(n.language));
-    return Array.from(langSet).sort();
+    // Sort by LANGUAGE_ORDER, unknown languages go to the end
+    return Array.from(langSet).sort((a, b) => {
+      const indexA = LANGUAGE_ORDER.indexOf(a);
+      const indexB = LANGUAGE_ORDER.indexOf(b);
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
   }, [names]);
 
   const filtered = useMemo(() => {
