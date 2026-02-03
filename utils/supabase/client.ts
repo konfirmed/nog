@@ -2,18 +2,21 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 let _supabase: SupabaseClient | null = null;
 
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_, prop) {
-    if (!_supabase) {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function getSupabaseClient(): SupabaseClient {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      if (!url || !key) {
-        throw new Error('Supabase environment variables are not configured');
-      }
-
-      _supabase = createClient(url, key);
+    if (!url || !key) {
+      throw new Error('Supabase environment variables are not configured');
     }
-    return (_supabase as any)[prop];
+
+    _supabase = createClient(url, key);
   }
-});
+  return _supabase;
+}
+
+// Export as a getter that creates client on first use
+export const supabase = {
+  from: (table: string) => getSupabaseClient().from(table),
+};
