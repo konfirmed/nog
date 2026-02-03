@@ -1,6 +1,8 @@
 import { supabase } from '@/utils/supabase/client'; // use the anon key client
 import Home from '@/components/home';
 
+export const runtime = 'edge';
+
 export default async function Page() {
   const { data, error } = await supabase
     .from('names_of_god')
