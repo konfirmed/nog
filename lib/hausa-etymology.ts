@@ -38,7 +38,6 @@ const HAUSA_COMPONENTS: Record<string, { meaning: string; type: EtymologyPart["t
   "madawwami": { meaning: "Eternal", type: "root" },
 
   // Action/Agent markers
-  "mai": { meaning: "One who has/Owner of", type: "prefix" },
   "mahalicci": { meaning: "Creator", type: "root" },
   "mai ceto": { meaning: "Savior", type: "root" },
 
