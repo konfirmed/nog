@@ -4,7 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cf:build": "npx opennextjs-cloudflare build",
+    "cf:build": "npx opennextjs-cloudflare build && cp .open-next/worker.js .open-next/_worker.js",
     "cf:preview": "npx wrangler dev",
     "cf:deploy": "npx wrangler deploy"
   },
