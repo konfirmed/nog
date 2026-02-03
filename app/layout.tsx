@@ -112,6 +112,9 @@ export default function RootLayout({
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
                   <div className="flex gap-5 items-center font-semibold">
                     <Link href={"/"}>NAMES of G_D</Link>
+                    <Link href={"/graph"} className="text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                      Relationship Map
+                    </Link>
                   </div>
                 </div>
               </nav>
