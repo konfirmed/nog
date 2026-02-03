@@ -1,8 +1,6 @@
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
 
-export const runtime = 'edge';
-
 export default async function NamesIndexPage() {
   const { data, error } = await supabase
     .from('names_of_god')

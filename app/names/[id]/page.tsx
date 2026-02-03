@@ -6,8 +6,6 @@ import { MiniRelationshipGraph } from '@/components/mini-relationship-graph';
 import { EtymologyBreakdownDisplay } from '@/components/etymology-breakdown';
 import { isUUID, generateSlug, findBySlug } from '@/lib/slug';
 
-export const runtime = 'edge';
-
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id: idOrSlug } = await params;
 
