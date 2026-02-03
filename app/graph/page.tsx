@@ -22,8 +22,8 @@ export default async function GraphPage() {
   }
 
   return (
-    <main className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6">
+    <main className="p-4 sm:p-6 max-w-7xl mx-auto">
+      <div className="mb-4 sm:mb-6">
         <Link
           href="/"
           className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
@@ -32,13 +32,15 @@ export default async function GraphPage() {
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-2">Relationship Map</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-6">
-        Explore the connections between divine names across cultures. Click on
-        any node to view its details. Drag to reposition nodes, scroll to zoom.
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Relationship Map</h1>
+      <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">
+        Explore connections between divine names across cultures.{" "}
+        <span className="hidden sm:inline">
+          Click on any node to view its details. Drag to reposition nodes, scroll to zoom.
+        </span>
       </p>
 
-      <RelationshipGraph names={names || []} height={700} />
+      <RelationshipGraph names={names || []} height={600} />
     </main>
   );
 }
