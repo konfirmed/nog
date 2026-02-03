@@ -19,11 +19,28 @@ const FEATURED_ATTRIBUTES = [
   'King',
 ];
 
+// All supported languages with display names
+const LANGUAGES: Record<string, string> = {
+  hebrew: 'Hebrew',
+  yoruba: 'Yoruba',
+  mandarin: 'Mandarin',
+  yiddish: 'Yiddish',
+  wolof: 'Wolof',
+  hindi: 'Hindi',
+  wu_chinese: 'Wu Chinese',
+  hausa: 'Hausa',
+  welsh: 'Welsh',
+  haitian_creole: 'Haitian Creole',
+};
+
+const ITEMS_PER_PAGE = 24;
+
 export default function Home({ names }: { names: any[] }) {
   const [query, setQuery] = useState('');
   const [language, setLanguage] = useState<string | null>(null);
   const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
   const [showAllAttributes, setShowAllAttributes] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Extract all unique attributes from the data
   const allAttributes = useMemo(() => {
@@ -43,6 +60,7 @@ export default function Home({ names }: { names: any[] }) {
     setSelectedAttributes((prev) =>
       prev.includes(attr) ? prev.filter((a) => a !== attr) : [...prev, attr]
     );
+    setCurrentPage(1);
   };
 
   const getTodayName = () => {
@@ -67,16 +85,37 @@ export default function Home({ names }: { names: any[] }) {
     alert('Copied to clipboard');
   };
 
-  const filtered = names.filter((n) => {
-    const matchesLang = language ? n.language === language : true;
-    const matchesQuery = [n.name, n.meaning, n.language, n.pronunciation || ''].some((val) =>
-      val.toLowerCase().includes(query.toLowerCase())
-    );
-    const matchesAttribute =
-      selectedAttributes.length === 0 ||
-      selectedAttributes.some((attr) => (n.attribute || []).includes(attr));
-    return matchesLang && matchesQuery && matchesAttribute;
-  });
+  // Get unique languages from data
+  const availableLanguages = useMemo(() => {
+    const langSet = new Set<string>();
+    names.forEach((n) => langSet.add(n.language));
+    return Array.from(langSet).sort();
+  }, [names]);
+
+  const filtered = useMemo(() => {
+    return names.filter((n) => {
+      const matchesLang = language ? n.language === language : true;
+      const matchesQuery = [n.name, n.meaning, n.language, n.pronunciation || ''].some((val) =>
+        val.toLowerCase().includes(query.toLowerCase())
+      );
+      const matchesAttribute =
+        selectedAttributes.length === 0 ||
+        selectedAttributes.some((attr) => (n.attribute || []).includes(attr));
+      return matchesLang && matchesQuery && matchesAttribute;
+    });
+  }, [names, language, query, selectedAttributes]);
+
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedNames = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset to page 1 when filters change
+  const handleFilterChange = () => {
+    setCurrentPage(1);
+  };
 
   return (
     <main>
@@ -103,13 +142,16 @@ export default function Home({ names }: { names: any[] }) {
         type="text"
         placeholder="Search by name, meaning, pronunciation, or language..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          handleFilterChange();
+        }}
         className="mb-4 w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm"
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
         <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 self-center">Language:</span>
-        {['yoruba', 'hebrew', 'mandarin'].map((lang) => (
+        {availableLanguages.map((lang) => (
           <button
             key={lang}
             className={`px-3 py-1 rounded-full border text-sm transition ${
@@ -117,9 +159,12 @@ export default function Home({ names }: { names: any[] }) {
                 ? 'bg-black text-white dark:bg-white dark:text-black'
                 : 'bg-white text-black dark:bg-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
-            onClick={() => setLanguage(language === lang ? null : lang)}
+            onClick={() => {
+              setLanguage(language === lang ? null : lang);
+              handleFilterChange();
+            }}
           >
-            {lang.charAt(0).toUpperCase() + lang.slice(1)}
+            {LANGUAGES[lang] || lang.charAt(0).toUpperCase() + lang.slice(1).replace('_', ' ')}
           </button>
         ))}
       </div>
@@ -130,7 +175,11 @@ export default function Home({ names }: { names: any[] }) {
           <span className="text-sm text-gray-600 dark:text-gray-400">Find by attribute:</span>
           {selectedAttributes.length > 0 && (
             <button
-              onClick={() => setSelectedAttributes([])}
+              type="button"
+              onClick={() => {
+                setSelectedAttributes([]);
+                setCurrentPage(1);
+              }}
               className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
             >
               Clear all
@@ -172,14 +221,15 @@ export default function Home({ names }: { names: any[] }) {
 
       {/* Results count */}
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-        Showing {filtered.length} of {names.length} names
+        Showing {paginatedNames.length} of {filtered.length} names
+        {filtered.length !== names.length && ` (filtered from ${names.length})`}
         {selectedAttributes.length > 0 && (
           <span> matching: {selectedAttributes.join(', ')}</span>
         )}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((n) => (
+        {paginatedNames.map((n) => (
           <div
             key={n.id}
             className="block p-4 border rounded-xl shadow hover:shadow-lg transition"
@@ -223,6 +273,73 @@ export default function Home({ names }: { names: any[] }) {
 
       {filtered.length === 0 && (
         <p className="text-sm text-gray-500 mt-6">No names match your search.</p>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+          <button
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            First
+          </button>
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Previous
+          </button>
+
+          <div className="flex items-center gap-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum: number;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-8 h-8 rounded text-sm ${
+                    currentPage === pageNum
+                      ? 'bg-indigo-600 text-white'
+                      : 'border hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Next
+          </button>
+          <button
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Last
+          </button>
+
+          <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+            Page {currentPage} of {totalPages}
+          </span>
+        </div>
       )}
     </main>
   );
