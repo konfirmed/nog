@@ -183,6 +183,16 @@ const KNOWN_COMPOUNDS: Record<string, EtymologyBreakdown> = {
     ],
     literalMeaning: "Owner of peace / The Peaceful One",
   },
+  "alábàáṣẹ": {
+    original: "Alábàáṣẹ",
+    parts: [
+      { part: "A", meaning: "One who", type: "prefix" },
+      { part: "lá", meaning: "has/uses", type: "root" },
+      { part: "bàá", meaning: "grants/gives to", type: "root" },
+      { part: "àṣẹ", meaning: "authority/command", type: "root" },
+    ],
+    literalMeaning: "The One who grants authority / Authority-Giver",
+  },
   "olùrànlọ́wọ́": {
     original: "Olùrànlọ́wọ́",
     parts: [
@@ -237,6 +247,25 @@ const KNOWN_COMPOUNDS: Record<string, EtymologyBreakdown> = {
       { part: "Ọ̀run", meaning: "Heaven", type: "root" },
     ],
     literalMeaning: "King of Earth and Heaven",
+  },
+  "olórí ayé àti ọ̀run": {
+    original: "Olórí Ayé àti Ọ̀run",
+    parts: [
+      { part: "Olórí", meaning: "Head/Ruler", type: "prefix" },
+      { part: "Ayé", meaning: "Earth/World", type: "root" },
+      { part: "àti", meaning: "and", type: "connector" },
+      { part: "Ọ̀run", meaning: "Heaven", type: "root" },
+    ],
+    literalMeaning: "Head of Earth and Heaven / Cosmic Lord",
+  },
+  "olúṣètọ́ ayé": {
+    original: "Olúṣètọ́ Ayé",
+    parts: [
+      { part: "Olú", meaning: "Lord/Master", type: "prefix" },
+      { part: "ṣètọ́", meaning: "arranges/designs/sets in order", type: "root" },
+      { part: "Ayé", meaning: "World/Earth", type: "root" },
+    ],
+    literalMeaning: "The One who designs the World / Architect of the World",
   },
   "ọba ogo": {
     original: "Ọba Ogo",
@@ -697,7 +726,7 @@ const KNOWN_COMPOUNDS: Record<string, EtymologyBreakdown> = {
 function normalizeForLookup(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[']/g, "'")
+    .replace(/[''`ʼ]/g, "'")
     .trim();
 }
 
