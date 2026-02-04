@@ -1,4 +1,6 @@
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { OrganizationJsonLd } from "@/components/json-ld";
+import { Logo } from "@/components/logo";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
@@ -17,68 +19,30 @@ export const metadata = {
     description: "A collection of names of G_D across different cultures and languages.",
     url: defaultUrl,
     siteName: "NAMES of G_D Across Cultures",
-    images: [
-      {
-        url: `${defaultUrl}/opengraph-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "NAMES of G_D Across Cultures",
-      },
-    ],
     locale: "en_US",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "NAMES of G_D Across Cultures",
     description: "A collection of names of G_D across different cultures and languages.",
-    images: [`${defaultUrl}/opengraph-image.png`],
-    creator: "@vercel",
-  },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
   },
   appleWebApp: {
     capable: true,
+    title: "Names of G_D",
     statusBarStyle: "black-translucent",
-  },
-  verification: {
-    google: "google-site-verification=your-google-site-verification-code",
-    yandex: "your-yandex-site-verification-code",
-    other: {
-      name: "example",
-      value: "example-verification-code",
-    },
   },
   robots: {
     index: true,
     follow: true,
-    nocache: false,
-    maxSnippet: -1,
-    maxImagePreview: "large",
-    maxVideoPreview: -1,
-    allow: {
-      "*": true,
-      "/api/*": true,
-      "/static/*": true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
     },
-    disallow: {
-      "/private/*": true,
-      "/secret/*": true,
-    },
-    noindex: false,
-    nofollow: false,
-    noarchive: false,
-    noimageindex: false,
-    novideoindex: false,
-    noydir: false,
-    nosnippet: false,
-    notranslate: false,
-    noimagepreview: false,
   },
-  appleMobileWebAppCapable: "yes",
-  appleMobileWebAppStatusBarStyle: "black-translucent",
   applicationName: "NAMES of G_D Across Cultures",
   formatDetection: {  
     telephone: false,
@@ -99,6 +63,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={geistSans.className} suppressHydrationWarning>
+      <head>
+        <OrganizationJsonLd />
+      </head>
       <body className="bg-background text-foreground">
         <ThemeProvider
           attribute="class"
@@ -110,8 +77,12 @@ export default function RootLayout({
             <div className="flex-1 w-full flex flex-col gap-5 items-center">
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-                  <div className="flex gap-5 items-center font-semibold">
-                    <Link href={"/"}>NAMES of G_D</Link>
+                  <div className="flex gap-4 items-center font-semibold">
+                    <Link href={"/"} className="flex items-center">
+                      <span>NAMES of G</span>
+                      <Logo size={14} className="mx-0.5" />
+                      <span>D</span>
+                    </Link>
                     <Link href={"/graph"} className="text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                       Relationship Map
                     </Link>
