@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { DailyDevotional } from './daily-devotional';
 import { generateSlug } from '@/lib/slug';
 import { LANGUAGES, LANGUAGE_ORDER, formatLanguage } from '@/lib/languages';
+import { AudioPlayer } from './audio-player';
+import { useI18n } from './i18n-provider';
 
 // Common attribute categories for quick access
 const FEATURED_ATTRIBUTES = [
@@ -48,6 +50,7 @@ export default function Home({
 }: HomeProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
 
   // Build URL with updated params
   const buildUrl = useCallback((updates: Record<string, string | null>) => {
@@ -113,7 +116,7 @@ export default function Home({
 
   const copy = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('Copied to clipboard');
+    alert(t('home.copied'));
   };
 
   const toggleAttribute = (attr: string) => {
@@ -129,7 +132,7 @@ export default function Home({
   return (
     <main>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <h1 className="text-3xl font-bold">NAMES of G_D Across Cultures</h1>
+        <h1 className="text-3xl font-bold">{t('home.title')}</h1>
         <div className="flex gap-2">
           <Link
             href="/compare"
@@ -138,7 +141,7 @@ export default function Home({
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            Compare Names
+            {t('home.compareNames')}
           </Link>
           <Link
             href="/graph"
@@ -150,7 +153,7 @@ export default function Home({
               <circle cx="19" cy="18" r="2" strokeWidth="2" />
               <path strokeLinecap="round" strokeWidth="2" d="M7 12h8m-2-4l4 4m-4 4l4-4" />
             </svg>
-            Explore Relationships
+            {t('home.exploreRelationships')}
           </Link>
         </div>
       </div>
@@ -160,7 +163,7 @@ export default function Home({
       {/* Search */}
       <input
         type="text"
-        placeholder="Search by name, meaning, pronunciation, or language..."
+        placeholder={t('home.searchPlaceholder')}
         value={searchInput}
         onChange={(e) => handleSearchChange(e.target.value)}
         className="mb-4 w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm"
@@ -168,7 +171,7 @@ export default function Home({
 
       {/* Language filter */}
       <div className="mb-4 flex flex-wrap gap-2">
-        <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 self-center">Language:</span>
+        <span className="text-sm text-gray-600 dark:text-gray-400 mr-1 self-center">{t('home.language')}</span>
         {sortedLanguages.map((lang) => (
           <button
             key={lang}
@@ -192,14 +195,14 @@ export default function Home({
       {/* Attribute filter */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">Find by attribute:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{t('home.findByAttribute')}</span>
           {currentAttributes.length > 0 && (
             <button
               type="button"
               onClick={() => navigate({ attributes: null, page: '1' })}
               className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
             >
-              Clear all
+              {t('home.clearAll')}
             </button>
           )}
         </div>
@@ -222,7 +225,7 @@ export default function Home({
               onClick={() => setShowAllAttributes(true)}
               className="px-3 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
-              +{availableAttributes.length - displayedFeatured.length} more
+              +{availableAttributes.length - displayedFeatured.length} {t('home.more')}
             </button>
           )}
           {showAllAttributes && (
@@ -230,7 +233,7 @@ export default function Home({
               onClick={() => setShowAllAttributes(false)}
               className="px-3 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
-              Show less
+              {t('home.showLess')}
             </button>
           )}
         </div>
@@ -238,9 +241,9 @@ export default function Home({
 
       {/* Results count */}
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-        Showing {names.length} of {total} names
+        {t('home.showing')} {names.length} {t('home.of')} {total} {t('home.names')}
         {currentAttributes.length > 0 && (
-          <span> matching: {currentAttributes.join(', ')}</span>
+          <span> {t('home.matching')} {currentAttributes.join(', ')}</span>
         )}
       </p>
 
@@ -256,8 +259,8 @@ export default function Home({
                 {n.name}
                 <span onClick={(e) => { e.preventDefault(); copy(n.name); }} className="cursor-pointer text-xs text-gray-500">📋</span>
               </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Language: {n.language.charAt(0).toUpperCase() + n.language.slice(1)}</p>
-              <p className="text-sm italic dark:text-gray-300">Meaning: {n.meaning}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t('home.language')} {formatLanguage(n.language)}</p>
+              <p className="text-sm italic dark:text-gray-300">{t('detail.meaning')} {n.meaning}</p>
               {n.attribute?.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
                   {n.attribute.slice(0, 3).map((attr: string) => (
@@ -279,9 +282,13 @@ export default function Home({
               )}
             </Link>
             {n.pronunciation && (
-              <p className="text-sm italic text-gray-700 flex items-center gap-2 mt-1">
+              <p className="text-sm italic text-gray-700 dark:text-gray-300 flex items-center gap-2 mt-1">
                 {n.pronunciation}
-                <button onClick={() => speak(n.pronunciation)} className="text-xs text-gray-500">🔊</button>
+                {n.audio_url ? (
+                  <AudioPlayer src={n.audio_url} label={`${t('audio.listen')} ${n.name}`} />
+                ) : (
+                  <button onClick={() => speak(n.pronunciation)} className="text-xs text-gray-500">🔊</button>
+                )}
               </p>
             )}
           </div>
@@ -289,7 +296,7 @@ export default function Home({
       </div>
 
       {names.length === 0 && (
-        <p className="text-sm text-gray-500 mt-6">No names match your search.</p>
+        <p className="text-sm text-gray-500 mt-6">{t('home.noMatch')}</p>
       )}
 
       {/* Pagination */}
@@ -299,13 +306,13 @@ export default function Home({
             href={buildUrl({ page: '1' })}
             className={`px-3 py-1 rounded border text-sm hover:bg-gray-100 dark:hover:bg-gray-800 ${page === 1 ? 'opacity-40 pointer-events-none' : ''}`}
           >
-            First
+            {t('pagination.first')}
           </Link>
           <Link
             href={buildUrl({ page: String(Math.max(1, page - 1)) })}
             className={`px-3 py-1 rounded border text-sm hover:bg-gray-100 dark:hover:bg-gray-800 ${page === 1 ? 'opacity-40 pointer-events-none' : ''}`}
           >
-            Previous
+            {t('pagination.previous')}
           </Link>
 
           <div className="flex items-center gap-1">
@@ -340,17 +347,17 @@ export default function Home({
             href={buildUrl({ page: String(Math.min(totalPages, page + 1)) })}
             className={`px-3 py-1 rounded border text-sm hover:bg-gray-100 dark:hover:bg-gray-800 ${page === totalPages ? 'opacity-40 pointer-events-none' : ''}`}
           >
-            Next
+            {t('pagination.next')}
           </Link>
           <Link
             href={buildUrl({ page: String(totalPages) })}
             className={`px-3 py-1 rounded border text-sm hover:bg-gray-100 dark:hover:bg-gray-800 ${page === totalPages ? 'opacity-40 pointer-events-none' : ''}`}
           >
-            Last
+            {t('pagination.last')}
           </Link>
 
           <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-            Page {page} of {totalPages}
+            {t('pagination.page')} {page} {t('pagination.of')} {totalPages}
           </span>
         </div>
       )}

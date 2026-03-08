@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { ScriptureVerse } from "./scripture-verse";
 import { generateSlug } from "@/lib/slug";
+import { useI18n } from "./i18n-provider";
+import { formatLanguage } from "@/lib/languages";
 
 interface DevotionalName {
   id: string;
@@ -56,6 +58,7 @@ function getReflectionPrompt(attributes?: string[], personality?: string): strin
 
 export function DailyDevotional({ name }: DailyDevotionalProps) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useI18n();
 
   const reflectionPrompt = getReflectionPrompt(name.attribute, name.divine_personality);
   const slug = generateSlug(name.name, name.language);
@@ -68,7 +71,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold mb-1">
-            Daily Devotional
+            {t("devotional.title")}
           </p>
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 dark:text-white">
             {name.name}
@@ -78,7 +81,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
           href={`/names/${slug}`}
           className="text-xs text-amber-700 dark:text-amber-400 hover:underline whitespace-nowrap"
         >
-          View full details →
+          {t("devotional.viewDetails")}
         </Link>
       </div>
 
@@ -88,11 +91,11 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
 
       <div className="mt-3 space-y-2">
         <p className="text-lg text-gray-800 dark:text-gray-200">
-          <span className="font-medium">Meaning:</span> {name.meaning}
+          <span className="font-medium">{t("detail.meaning")}</span> {name.meaning}
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          <span className="font-medium">Language:</span>{" "}
-          {name.language.charAt(0).toUpperCase() + name.language.slice(1)}
+          <span className="font-medium">{t("detail.languageLabel")}</span>{" "}
+          {formatLanguage(name.language)}
         </p>
       </div>
 
@@ -122,7 +125,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
-        {expanded ? "Show less" : "Read today's devotional"}
+        {expanded ? t("devotional.showLess") : t("devotional.readDevotional")}
       </button>
 
       {expanded && (
@@ -131,7 +134,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
           {name.scripture_refs && name.scripture_refs.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Scripture
+                {t("devotional.scripture")}
               </h3>
               <div className="space-y-2">
                 {name.scripture_refs.slice(0, 2).map((ref) => (
@@ -145,7 +148,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
           {name.context_of_use && (
             <div>
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                When to use this name
+                {t("devotional.whenToUse")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">{name.context_of_use}</p>
             </div>
@@ -155,7 +158,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
           {name.divine_personality && (
             <div>
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                Divine Character
+                {t("devotional.divineCharacter")}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">{name.divine_personality}</p>
             </div>
@@ -164,7 +167,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
           {/* Reflection */}
           <div className="bg-white/50 dark:bg-black/20 rounded-lg p-4">
             <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300 mb-2">
-              Reflect
+              {t("devotional.reflect")}
             </h3>
             <p className="text-sm italic text-gray-700 dark:text-gray-300">{reflectionPrompt}</p>
           </div>
@@ -173,15 +176,15 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
 
       {/* Share buttons */}
       <div className="mt-4 pt-3 border-t border-amber-200 dark:border-amber-800 flex flex-wrap items-center gap-3 text-sm">
-        <span className="text-gray-500 dark:text-gray-400">Share:</span>
+        <span className="text-gray-500 dark:text-gray-400">{t("devotional.share")}</span>
         <button
           onClick={() => {
             navigator.clipboard.writeText(`${shareText} – ${shareUrl}`);
-            alert("Copied to clipboard!");
+            alert(t("home.copied"));
           }}
           className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
         >
-          Copy
+          {t("devotional.copy")}
         </button>
         <a
           href={`https://wa.me/?text=${encodeURIComponent(`${shareText} – ${shareUrl}`)}`}

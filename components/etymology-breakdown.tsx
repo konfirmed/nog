@@ -10,6 +10,7 @@ import { parseWolofEtymology } from "@/lib/wolof-etymology";
 import { parseHaitianCreoleEtymology } from "@/lib/haitian-creole-etymology";
 import { parseWuChineseEtymology } from "@/lib/wu-chinese-etymology";
 import { parseMandarinEtymology } from "@/lib/mandarin-etymology";
+import { useI18n } from "./i18n-provider";
 
 interface EtymologyBreakdownProps {
   name: string;
@@ -141,6 +142,7 @@ function getLanguageDisplayName(language: string): string {
 }
 
 export function EtymologyBreakdownDisplay({ name, language }: EtymologyBreakdownProps) {
+  const { t } = useI18n();
   const etymology = getEtymology(name, language);
   if (!etymology || etymology.parts.length === 0) return null;
 
@@ -158,7 +160,7 @@ export function EtymologyBreakdownDisplay({ name, language }: EtymologyBreakdown
             d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
           />
         </svg>
-        {languageDisplay} Etymology Breakdown
+        {languageDisplay} {t("etymology.breakdown")}
       </h3>
 
       {/* Parts breakdown */}
@@ -183,7 +185,7 @@ export function EtymologyBreakdownDisplay({ name, language }: EtymologyBreakdown
       {/* Literal meaning */}
       <div className={`border-t ${colors.border} pt-3 mt-3`}>
         <p className="text-sm">
-          <span className="font-medium text-gray-700 dark:text-gray-300">Literal meaning: </span>
+          <span className="font-medium text-gray-700 dark:text-gray-300">{t("etymology.literalMeaning")} </span>
           <span className="italic text-gray-600 dark:text-gray-400">
             {etymology.literalMeaning}
           </span>
@@ -192,11 +194,11 @@ export function EtymologyBreakdownDisplay({ name, language }: EtymologyBreakdown
 
       {/* Legend */}
       <div className={`flex flex-wrap gap-3 mt-3 pt-3 border-t ${colors.border}`}>
-        <span className="text-xs text-gray-500 dark:text-gray-400">Legend:</span>
-        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.prefix}`}>Prefix</span>
-        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.root}`}>Root</span>
-        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.suffix}`}>Suffix</span>
-        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.connector}`}>Connector</span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">{t("etymology.legend")}</span>
+        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.prefix}`}>{t("etymology.prefix")}</span>
+        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.root}`}>{t("etymology.root")}</span>
+        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.suffix}`}>{t("etymology.suffix")}</span>
+        <span className={`text-xs px-1.5 py-0.5 rounded ${TYPE_COLORS.connector}`}>{t("etymology.connector")}</span>
       </div>
     </div>
   );

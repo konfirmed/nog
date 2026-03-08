@@ -12,6 +12,7 @@ import {
   type GraphData,
 } from "@/lib/graph-utils";
 import { generateSlug } from "@/lib/slug";
+import { useI18n } from "./i18n-provider";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
@@ -37,10 +38,12 @@ export function MiniRelationshipGraph({
 }: MiniRelationshipGraphProps) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 400, height: 300 });
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -51,9 +54,12 @@ export function MiniRelationshipGraph({
 
     const updateDimensions = () => {
       if (containerRef.current) {
+        const width = containerRef.current.offsetWidth;
+        const mobile = width < 640;
+        setIsMobile(mobile);
         setDimensions({
-          width: containerRef.current.offsetWidth,
-          height: 300,
+          width,
+          height: mobile ? 250 : 300,
         });
       }
     };
@@ -95,12 +101,12 @@ export function MiniRelationshipGraph({
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xl font-bold">Relationship Map</h2>
+        <h2 className="text-xl font-bold">{t("graph.relationshipMap")}</h2>
         <Link
           href="/graph"
           className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
-          View full map →
+          {t("graph.viewFullMap")}
         </Link>
       </div>
 
@@ -121,7 +127,7 @@ export function MiniRelationshipGraph({
       <div
         ref={containerRef}
         className="border rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900"
-        style={{ height: 300 }}
+        style={{ height: dimensions.height }}
       >
         <ForceGraph2D
           graphData={graphData}
@@ -136,13 +142,13 @@ export function MiniRelationshipGraph({
             const n = node as { color?: string; id?: string };
             return n.color || "#9ca3af";
           }}
-          nodeRelSize={5}
+          nodeRelSize={isMobile ? 4 : 5}
           nodeCanvasObject={(node, ctx, globalScale) => {
             const n = node as { x?: number; y?: number; color?: string; name?: string; id?: string };
             const x = n.x || 0;
             const y = n.y || 0;
             const isCenter = n.id === centerId;
-            const radius = isCenter ? 8 : 5;
+            const radius = isCenter ? (isMobile ? 6 : 8) : (isMobile ? 4 : 5);
 
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, 2 * Math.PI);
@@ -151,11 +157,16 @@ export function MiniRelationshipGraph({
 
             if (isCenter) {
               ctx.strokeStyle = isDark ? "#fff" : "#000";
-              ctx.lineWidth = 2;
+              ctx.lineWidth = isMobile ? 1.5 : 2;
               ctx.stroke();
             }
 
-            const fontSize = isCenter ? 12 / globalScale : 10 / globalScale;
+            // Skip text labels on mobile for non-center nodes when zoomed out
+            if (isMobile && !isCenter && globalScale < 1.5) return;
+
+            const fontSize = isCenter
+              ? (isMobile ? 10 : 12) / globalScale
+              : (isMobile ? 8 : 10) / globalScale;
             ctx.font = `${isCenter ? "bold " : ""}${fontSize}px Sans-Serif`;
             ctx.textAlign = "center";
             ctx.textBaseline = "top";
@@ -163,17 +174,20 @@ export function MiniRelationshipGraph({
             ctx.fillText(n.name || "", x, y + radius + 2);
           }}
           linkColor={() => (isDark ? "#4b5563" : "#d1d5db")}
-          linkWidth={1.5}
+          linkWidth={isMobile ? 1 : 1.5}
           onNodeClick={handleNodeClick}
-          cooldownTicks={50}
-          enableNodeDrag={true}
+          cooldownTicks={isMobile ? 30 : 50}
+          warmupTicks={isMobile ? 20 : 0}
+          d3AlphaDecay={isMobile ? 0.05 : 0.0228}
+          d3VelocityDecay={isMobile ? 0.5 : 0.4}
+          enableNodeDrag={!isMobile}
           enableZoomInteraction={true}
           enablePanInteraction={true}
         />
       </div>
 
       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-        Showing {graphData.nodes.length} connected names. Click a node to explore.
+        {t("graph.showing")} {graphData.nodes.length} {t("graph.connectedNames")}
       </p>
     </div>
   );

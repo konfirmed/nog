@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { generateSlug } from '@/lib/slug';
 import { formatLanguage } from '@/lib/languages';
+import { useI18n } from './i18n-provider';
 
 interface CompareClientProps {
   allNames: { id: string; name: string; language: string }[];
@@ -14,6 +15,7 @@ interface CompareClientProps {
 
 export function CompareClient({ allNames, selectedNames, selectedIds }: CompareClientProps) {
   const router = useRouter();
+  const { t } = useI18n();
   const [search, setSearch] = useState('');
   const [languageFilter, setLanguageFilter] = useState<string | null>(null);
 
@@ -71,16 +73,16 @@ export function CompareClient({ allNames, selectedNames, selectedIds }: CompareC
     <main className="w-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Compare Names</h1>
+          <h1 className="text-3xl font-bold">{t("compare.title")}</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Select names to compare side by side
+            {t("compare.selectNames")}
           </p>
         </div>
         <Link
           href="/"
           className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
         >
-          ← Back to Home
+          {t("detail.backToHome")}
         </Link>
       </div>
 
@@ -129,7 +131,7 @@ export function CompareClient({ allNames, selectedNames, selectedIds }: CompareC
               onClick={clearAll}
               className="text-xs text-red-500 hover:text-red-700 hover:underline self-center"
             >
-              Clear all
+              {t("home.clearAll")}
             </button>
           </div>
         )}

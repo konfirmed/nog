@@ -40,7 +40,7 @@ export default async function Page({
   // Build server-side query with pagination
   let dbQuery = supabase
     .from('names_of_god')
-    .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality', { count: 'exact' });
+    .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality, audio_url', { count: 'exact' });
 
   if (language) {
     dbQuery = dbQuery.eq('language', language);
@@ -85,7 +85,7 @@ export default async function Page({
     const dayIndex = new Date().getDate() % totalNames;
     const { data: devotionalData } = await supabase
       .from('names_of_god')
-      .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality')
+      .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality, audio_url')
       .order('name')
       .range(dayIndex, dayIndex);
     todayName = devotionalData?.[0] || null;
