@@ -85,6 +85,9 @@ export default function RootLayout({
                       <Logo size={14} className="mx-0.5" />
                       <span>D</span>
                     </Link>
+                    <Link href={"/compare"} className="text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                      Compare
+                    </Link>
                     <Link href={"/graph"} className="text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                       Relationship Map
                     </Link>
