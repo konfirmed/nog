@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const dynamic = "force-dynamic";
+
 export const alt = "NAMES of G_D Across Cultures";
 export const size = {
   width: 1200,
