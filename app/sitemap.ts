@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import { generateSlug } from '@/lib/slug';
 
+export const dynamic = 'force-dynamic';
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000';
