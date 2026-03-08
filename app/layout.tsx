@@ -1,4 +1,5 @@
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 import { OrganizationJsonLd } from "@/components/json-ld";
 import { Logo } from "@/components/logo";
 import { Geist } from "next/font/google";
@@ -67,6 +68,7 @@ export default function RootLayout({
         <OrganizationJsonLd />
       </head>
       <body className="bg-background text-foreground">
+        <ServiceWorkerRegister />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
