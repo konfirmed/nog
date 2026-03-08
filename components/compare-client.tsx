@@ -4,23 +4,7 @@ import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { generateSlug } from '@/lib/slug';
-
-const LANGUAGES: Record<string, string> = {
-  yoruba: 'Yoruba',
-  hebrew: 'Hebrew',
-  welsh: 'Welsh',
-  hindi: 'Hindi',
-  yiddish: 'Yiddish',
-  hausa: 'Hausa',
-  wolof: 'Wolof',
-  haitian_creole: 'Haitian Creole',
-  wu_chinese: 'Wu Chinese',
-  mandarin: 'Mandarin',
-};
-
-function formatLanguage(lang: string): string {
-  return LANGUAGES[lang] || lang.charAt(0).toUpperCase() + lang.slice(1).replace('_', ' ');
-}
+import { formatLanguage } from '@/lib/languages';
 
 interface CompareClientProps {
   allNames: { id: string; name: string; language: string }[];

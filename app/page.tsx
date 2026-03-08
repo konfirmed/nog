@@ -73,14 +73,21 @@ export default async function Page({
     (n.attribute || []).forEach((attr: string) => allAttributes.add(attr));
   });
 
-  // Fetch a random name for daily devotional (use all names count)
-  const { data: devotionalNames } = await supabase
+  // Fetch a single name for daily devotional using count + offset
+  const { count: totalNames } = await supabase
     .from('names_of_god')
-    .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality');
+    .select('id', { count: 'exact', head: true });
 
-  const todayName = devotionalNames && devotionalNames.length > 0
-    ? devotionalNames[new Date().getDate() % devotionalNames.length]
-    : null;
+  let todayName = null;
+  if (totalNames && totalNames > 0) {
+    const dayIndex = new Date().getDate() % totalNames;
+    const { data: devotionalData } = await supabase
+      .from('names_of_god')
+      .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality')
+      .order('name')
+      .range(dayIndex, dayIndex);
+    todayName = devotionalData?.[0] || null;
+  }
 
   if (error) {
     console.error('Error fetching names_of_god:', error.message);

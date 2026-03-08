@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DailyDevotional } from './daily-devotional';
 import { generateSlug } from '@/lib/slug';
+import { LANGUAGES, LANGUAGE_ORDER, formatLanguage } from '@/lib/languages';
 
 // Common attribute categories for quick access
 const FEATURED_ATTRIBUTES = [
@@ -19,23 +20,6 @@ const FEATURED_ATTRIBUTES = [
   'Peace',
   'King',
 ];
-
-// All supported languages with display names
-// Ordered in YHWH pattern with Mandarin at the end
-const LANGUAGES: Record<string, string> = {
-  yoruba: 'Yoruba',           // Y
-  hebrew: 'Hebrew',           // H
-  welsh: 'Welsh',             // W
-  hindi: 'Hindi',             // H
-  yiddish: 'Yiddish',         // Y
-  hausa: 'Hausa',             // H
-  wolof: 'Wolof',             // W
-  haitian_creole: 'Haitian Creole', // H
-  wu_chinese: 'Wu Chinese',   // W
-  mandarin: 'Mandarin',       // (end)
-};
-
-const LANGUAGE_ORDER = Object.keys(LANGUAGES);
 
 interface HomeProps {
   names: any[];
@@ -95,10 +79,30 @@ export default function Home({
     return indexA - indexB;
   });
 
+  // Debounced search
+  const [searchInput, setSearchInput] = useState(currentQuery);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    setSearchInput(currentQuery);
+  }, [currentQuery]);
+
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      navigate({ q: value || null, page: '1' });
+    }, 300);
+  };
+
   // Get attributes to display
+  const [showAllAttributes, setShowAllAttributes] = useState(false);
   const displayedFeatured = FEATURED_ATTRIBUTES.filter((attr) =>
     availableAttributes.includes(attr)
   );
+  const displayedAttributes = showAllAttributes
+    ? availableAttributes
+    : displayedFeatured;
 
   const speak = (text: string) => {
     if (typeof window !== 'undefined') {
@@ -154,21 +158,13 @@ export default function Home({
       {todayName && <DailyDevotional name={todayName} />}
 
       {/* Search */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          navigate({ q: (formData.get('q') as string) || null, page: '1' });
-        }}
-      >
-        <input
-          name="q"
-          type="text"
-          placeholder="Search by name, meaning, pronunciation, or language..."
-          defaultValue={currentQuery}
-          className="mb-4 w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm"
-        />
-      </form>
+      <input
+        type="text"
+        placeholder="Search by name, meaning, pronunciation, or language..."
+        value={searchInput}
+        onChange={(e) => handleSearchChange(e.target.value)}
+        className="mb-4 w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm"
+      />
 
       {/* Language filter */}
       <div className="mb-4 flex flex-wrap gap-2">
@@ -188,7 +184,7 @@ export default function Home({
               })
             }
           >
-            {LANGUAGES[lang] || lang.charAt(0).toUpperCase() + lang.slice(1).replace('_', ' ')}
+            {formatLanguage(lang)}
           </button>
         ))}
       </div>
@@ -208,7 +204,7 @@ export default function Home({
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          {displayedFeatured.map((attr) => (
+          {displayedAttributes.map((attr) => (
             <button
               key={attr}
               onClick={() => toggleAttribute(attr)}
@@ -221,6 +217,22 @@ export default function Home({
               {attr}
             </button>
           ))}
+          {!showAllAttributes && availableAttributes.length > displayedFeatured.length && (
+            <button
+              onClick={() => setShowAllAttributes(true)}
+              className="px-3 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            >
+              +{availableAttributes.length - displayedFeatured.length} more
+            </button>
+          )}
+          {showAllAttributes && (
+            <button
+              onClick={() => setShowAllAttributes(false)}
+              className="px-3 py-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            >
+              Show less
+            </button>
+          )}
         </div>
       </div>
 
