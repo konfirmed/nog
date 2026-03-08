@@ -12,6 +12,7 @@ import {
   type GraphData,
 } from "@/lib/graph-utils";
 import { generateSlug } from "@/lib/slug";
+import { useI18n } from "./i18n-provider";
 
 // Dynamic import to avoid SSR issues with canvas
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -50,6 +51,7 @@ export function RelationshipGraph({
 }: RelationshipGraphProps) {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
@@ -125,7 +127,7 @@ export function RelationshipGraph({
   if (!mounted) {
     return (
       <div className={`${className} flex items-center justify-center`} style={{ height }}>
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-gray-500">{t("graph.loading")}</p>
       </div>
     );
   }
@@ -137,7 +139,7 @@ export function RelationshipGraph({
       {/* Language Filter */}
       <div className="mb-3 sm:mb-4">
         <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 block mb-2">
-          Filter by language:
+          {t("graph.filterByLanguage")}
         </span>
         <div className="grid grid-cols-5 sm:flex sm:flex-wrap gap-1 sm:gap-2">
           {Object.entries(LANGUAGE_COLORS).map(([language, color]) => (
@@ -169,7 +171,7 @@ export function RelationshipGraph({
             onClick={() => setSelectedLanguages([])}
             className="mt-2 px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
           >
-            Clear filters
+            {t("graph.clearFilters")}
           </button>
         )}
       </div>
@@ -197,7 +199,7 @@ export function RelationshipGraph({
       >
         {!dimensions ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">Initializing...</p>
+            <p className="text-gray-500 text-sm">{t("graph.initializing")}</p>
           </div>
         ) : graphData.nodes.length > 0 ? (
           <ForceGraph2D
@@ -213,28 +215,31 @@ export function RelationshipGraph({
             linkColor={() => (isDark ? "#4b5563" : "#d1d5db")}
             linkWidth={isMobile ? 1 : 1.5}
             onNodeClick={handleNodeClick}
-            cooldownTicks={100}
+            cooldownTicks={isMobile ? 60 : 100}
             onEngineStop={() => {}}
-            enableNodeDrag={true}
+            enableNodeDrag={!isMobile}
             enableZoomInteraction={true}
             enablePanInteraction={true}
+            d3AlphaDecay={isMobile ? 0.05 : 0.0228}
+            d3VelocityDecay={isMobile ? 0.5 : 0.4}
+            warmupTicks={isMobile ? 30 : 0}
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No data to display</p>
+            <p className="text-gray-500 text-sm">{t("graph.noData")}</p>
           </div>
         )}
       </div>
 
       {/* Stats */}
       <div className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-        Showing {graphData.nodes.length} names with {graphData.links.length} connections
+        {t("graph.showing")} {graphData.nodes.length} {t("graph.namesWith")} {graphData.links.length} {t("graph.connections")}
       </div>
 
       {/* Mobile tip */}
       {isMobile && (
         <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          Tip: Pinch to zoom, drag to pan, tap a node to view details
+          {t("graph.mobileTip")}
         </p>
       )}
     </div>

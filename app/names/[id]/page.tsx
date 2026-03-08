@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic';
 import { MiniRelationshipGraph } from '@/components/mini-relationship-graph';
 import { EtymologyBreakdownDisplay } from '@/components/etymology-breakdown';
 import { NamePageJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
+import { AudioPlayer } from '@/components/audio-player';
 import { isUUID, generateSlug, findBySlug } from '@/lib/slug';
 
 const defaultUrl = process.env.VERCEL_URL
@@ -131,7 +132,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         </div>
 
         <h1 className="text-3xl font-bold mb-2">{data.name}</h1>
-        <p className="text-gray-700 dark:text-gray-400 italic">{data.pronunciation}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-gray-700 dark:text-gray-400 italic">{data.pronunciation}</p>
+          {data.audio_url && (
+            <AudioPlayer src={data.audio_url} label={`Listen to ${data.name}`} />
+          )}
+        </div>
         <p className="mt-2 text-lg">Meaning: {data.meaning}</p>
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           Language: {language}
