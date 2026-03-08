@@ -2,6 +2,8 @@ import { supabase } from "@/utils/supabase/client";
 import { RelationshipGraph } from "@/components/relationship-graph";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Relationship Map | Names of G_D",
   description:

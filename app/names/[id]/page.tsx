@@ -3,6 +3,8 @@ import { Metadata } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
 import { ScriptureList } from '@/components/scripture-verse';
+
+export const dynamic = 'force-dynamic';
 import { MiniRelationshipGraph } from '@/components/mini-relationship-graph';
 import { EtymologyBreakdownDisplay } from '@/components/etymology-breakdown';
 import { NamePageJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
