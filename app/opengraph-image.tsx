@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export const alt = "NAMES of G_D Across Cultures";
 export const size = {

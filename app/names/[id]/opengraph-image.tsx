@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 import { supabase } from '@/utils/supabase/client';
 import { isUUID, findBySlug } from '@/lib/slug';
 
-export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 export const alt = 'Name of G_D';
 export const size = {
   width: 1200,

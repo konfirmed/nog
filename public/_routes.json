@@ -4,6 +4,6 @@
   "exclude": [
     "/_next/static/*",
     "/favicon.ico",
-    "/twitter-image.png"
+    "/sw.js"
   ]
 }

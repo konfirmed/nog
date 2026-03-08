@@ -1,4 +1,5 @@
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 import { OrganizationJsonLd } from "@/components/json-ld";
 import { Logo } from "@/components/logo";
 import { Geist } from "next/font/google";
@@ -67,6 +68,7 @@ export default function RootLayout({
         <OrganizationJsonLd />
       </head>
       <body className="bg-background text-foreground">
+        <ServiceWorkerRegister />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -82,6 +84,9 @@ export default function RootLayout({
                       <span>NAMES of G</span>
                       <Logo size={14} className="mx-0.5" />
                       <span>D</span>
+                    </Link>
+                    <Link href={"/compare"} className="text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                      Compare
                     </Link>
                     <Link href={"/graph"} className="text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
                       Relationship Map

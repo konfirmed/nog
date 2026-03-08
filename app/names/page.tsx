@@ -3,6 +3,8 @@ import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
 import { CollectionPageJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
+export const dynamic = 'force-dynamic';
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
