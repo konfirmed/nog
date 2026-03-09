@@ -177,8 +177,8 @@ export function CompareClient({ allNames, selectedNames, selectedIds }: CompareC
             </div>
           )}
 
-          {/* Comparison grid */}
-          <div className="overflow-x-auto">
+          {/* Comparison grid - table on md+, cards on mobile */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
@@ -238,6 +238,57 @@ export function CompareClient({ allNames, selectedNames, selectedIds }: CompareC
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile card layout */}
+          <div className="md:hidden flex flex-col gap-4">
+            {selectedNames.map((n) => (
+              <div key={n.id} className="border rounded-xl p-4 bg-white dark:bg-gray-900">
+                <div className="mb-3 pb-2 border-b">
+                  <Link
+                    href={`/names/${generateSlug(n.name, n.language)}`}
+                    className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold text-lg"
+                  >
+                    {n.name}
+                  </Link>
+                  <span className="block text-xs text-gray-500 mt-0.5">
+                    {formatLanguage(n.language)}
+                  </span>
+                </div>
+                {COMPARE_FIELDS.map(({ key, label, isArray, format }) => {
+                  const value = n[key];
+                  if (!isArray && !value) return null;
+                  if (isArray && (!value || value.length === 0)) return null;
+                  return (
+                    <div key={key} className="mb-3">
+                      <dt className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+                        {label}
+                      </dt>
+                      <dd>
+                        {isArray ? (
+                          <div className="flex flex-wrap gap-1">
+                            {(value || []).map((item: string) => (
+                              <span
+                                key={item}
+                                className={`text-xs px-2 py-0.5 rounded-full ${
+                                  key === 'attribute' && sharedAttributes.includes(item)
+                                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
+                                    : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                                }`}
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-sm">{format ? format(value) : value}</span>
+                        )}
+                      </dd>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </>
       )}
