@@ -1,6 +1,7 @@
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import { OrganizationJsonLd } from "@/components/json-ld";
+import { WebMCPTools } from "@/components/webmcp-tools";
 import { I18nProvider } from "@/components/i18n-provider";
 import { NavLinks } from "@/components/nav-links";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -72,6 +73,7 @@ export default function RootLayout({
       </head>
       <body className="bg-background text-foreground">
         <ServiceWorkerRegister />
+        <WebMCPTools />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
