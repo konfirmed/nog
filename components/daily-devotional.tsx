@@ -1,9 +1,10 @@
 "use client";
+import { absoluteUrl } from '@/lib/site-url';
 
 import { useState } from "react";
 import Link from "next/link";
 import { ScriptureVerse } from "./scripture-verse";
-import { generateSlug } from "@/lib/slug";
+import { namePath } from "@/lib/slug";
 import { useI18n } from "./i18n-provider";
 import { formatLanguage } from "@/lib/languages";
 
@@ -61,10 +62,10 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
   const { t } = useI18n();
 
   const reflectionPrompt = getReflectionPrompt(name.attribute, name.divine_personality);
-  const slug = generateSlug(name.name, name.language);
+  const path = namePath(name);
 
   const shareText = `Today's Name of G_D: ${name.name} (${name.meaning})`;
-  const shareUrl = `https://nog.knfrmd.com/names/${slug}`;
+  const shareUrl = absoluteUrl(path);
 
   return (
     <div className="mb-8 p-5 border-2 border-amber-200 dark:border-amber-800 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 shadow-lg">
@@ -78,7 +79,7 @@ export function DailyDevotional({ name }: DailyDevotionalProps) {
           </h2>
         </div>
         <Link
-          href={`/names/${slug}`}
+          href={path}
           className="text-xs text-amber-700 dark:text-amber-400 hover:underline whitespace-nowrap"
         >
           {t("devotional.viewDetails")}

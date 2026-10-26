@@ -1,12 +1,11 @@
+import { siteUrl, absoluteUrl } from '@/lib/site-url';
 import { MetadataRoute } from 'next';
 import { supabase } from '@/utils/supabase/client';
-import { generateSlug } from '@/lib/slug';
+import { namePath } from '@/lib/slug';
 
 export const dynamic = 'force-dynamic';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000';
+const defaultUrl = siteUrl;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: names } = await supabase
@@ -14,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select('id, name, language, updated_at');
 
   const nameEntries: MetadataRoute.Sitemap = (names || []).map((name) => ({
-    url: `${defaultUrl}/names/${generateSlug(name.name, name.language)}`,
+    url: absoluteUrl(namePath(name)),
     lastModified: name.updated_at ? new Date(name.updated_at) : new Date(),
     changeFrequency: 'monthly',
     priority: 0.8,

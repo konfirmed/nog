@@ -1,3 +1,4 @@
+import { siteUrl } from '@/lib/site-url';
 interface JsonLdProps {
   data: Record<string, unknown>;
 }
@@ -11,9 +12,7 @@ export function JsonLd({ data }: JsonLdProps) {
   );
 }
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = siteUrl;
 
 export function OrganizationJsonLd() {
   const data = {

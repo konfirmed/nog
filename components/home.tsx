@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DailyDevotional } from './daily-devotional';
-import { generateSlug } from '@/lib/slug';
+import { namePath } from '@/lib/slug';
 import { LANGUAGES, LANGUAGE_ORDER, formatLanguage } from '@/lib/languages';
 import { AudioPlayer } from './audio-player';
 import { useI18n } from './i18n-provider';
@@ -254,7 +254,7 @@ export default function Home({
             key={n.id}
             className="block p-4 border rounded-xl shadow hover:shadow-lg transition"
           >
-            <Link href={`/names/${generateSlug(n.name, n.language)}`}>
+            <Link href={namePath(n)}>
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 {n.name}
                 <span onClick={(e) => { e.preventDefault(); copy(n.name); }} className="cursor-pointer text-xs text-gray-500">📋</span>

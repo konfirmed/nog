@@ -11,7 +11,7 @@ import {
   type NameRecord,
   type GraphData,
 } from "@/lib/graph-utils";
-import { generateSlug } from "@/lib/slug";
+import { namePath } from "@/lib/slug";
 import { useI18n } from "./i18n-provider";
 
 // Dynamic import to avoid SSR issues with canvas
@@ -108,7 +108,7 @@ export function RelationshipGraph({
   const handleNodeClick = useCallback(
     (node: { id?: string | number; name?: string; language?: string }) => {
       if (node.id && node.name && node.language) {
-        router.push(`/names/${generateSlug(node.name, node.language)}`);
+        router.push(namePath({ id: String(node.id), name: node.name, language: node.language }));
       }
     },
     [router]

@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { supabase } from '@/utils/supabase/client';
-import { isUUID, findBySlug } from '@/lib/slug';
+import { idFromIdentifier, generateSlug } from '@/lib/slug';
 
 export const dynamic = 'force-dynamic';
 export const alt = 'Name of G_D';
@@ -11,11 +11,12 @@ export const size = {
 export const contentType = 'image/png';
 
 async function getNameData(idOrSlug: string) {
-  if (isUUID(idOrSlug)) {
+  const directId = idFromIdentifier(idOrSlug);
+  if (directId) {
     const { data } = await supabase
       .from('names_of_god')
       .select('name, meaning, language, pronunciation')
-      .eq('id', idOrSlug)
+      .eq('id', directId)
       .single();
     return data;
   }
@@ -26,7 +27,8 @@ async function getNameData(idOrSlug: string) {
 
   if (!allNames) return null;
 
-  const match = findBySlug(allNames, idOrSlug);
+  const matches = allNames.filter(n => generateSlug(n.name, n.language) === idOrSlug);
+  const match = matches.length === 1 ? matches[0] : null;
   if (!match) return null;
 
   const { data } = await supabase

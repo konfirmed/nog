@@ -1,3 +1,4 @@
+import { siteUrl } from '@/lib/site-url';
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import { OrganizationJsonLd } from "@/components/json-ld";
@@ -11,9 +12,7 @@ import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = siteUrl;
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),

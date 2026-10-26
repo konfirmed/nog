@@ -1,3 +1,5 @@
+import { devotionalIndex } from '@/lib/devotional';
+import { siteUrl } from '@/lib/site-url';
 import { Metadata } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import Home from '@/components/home';
@@ -5,9 +7,7 @@ import { BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const dynamic = 'force-dynamic';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = siteUrl;
 
 export const metadata: Metadata = {
   title: 'NAMES of G_D Across Cultures | Divine Names from Around the World',
@@ -76,19 +76,21 @@ export default async function Page({
   });
 
   // Fetch a single name for daily devotional using count + offset
-  const { count: totalNames } = await supabase
+  const { count: totalNames, error: devotionalCountError } = await supabase
     .from('names_of_god')
     .select('id', { count: 'exact', head: true });
 
   let todayName = null;
-  if (totalNames && totalNames > 0) {
-    const dayIndex = new Date().getDate() % totalNames;
-    const { data: devotionalData } = await supabase
+  if (devotionalCountError) console.error('Daily devotional count failed:', devotionalCountError.message);
+  if (!devotionalCountError && totalNames && totalNames > 0) {
+    const dayIndex = devotionalIndex(new Date(), totalNames);
+    const { data: devotionalData, error: devotionalError } = await supabase
       .from('names_of_god')
       .select('id, name, language, meaning, pronunciation, attribute, scripture_refs, context_of_use, divine_personality, audio_url')
-      .order('name')
+      .order('id')
       .range(dayIndex, dayIndex);
-    todayName = devotionalData?.[0] || null;
+    if (devotionalError) console.error('Daily devotional lookup failed:', devotionalError.message);
+    todayName = devotionalError ? null : devotionalData?.[0] || null;
   }
 
   if (error) {

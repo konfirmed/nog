@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { generateSlug } from '@/lib/slug';
+import { namePath } from '@/lib/slug';
 import { formatLanguage } from '@/lib/languages';
 import { useI18n } from './i18n-provider';
 
@@ -188,7 +188,7 @@ export function CompareClient({ allNames, selectedNames, selectedIds }: CompareC
                   {selectedNames.map((n) => (
                     <th key={n.id} className="text-left p-3 border-b bg-gray-50 dark:bg-gray-900 min-w-[200px]">
                       <Link
-                        href={`/names/${generateSlug(n.name, n.language)}`}
+                        href={namePath(n)}
                         className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold text-base"
                       >
                         {n.name}
@@ -246,7 +246,7 @@ export function CompareClient({ allNames, selectedNames, selectedIds }: CompareC
               <div key={n.id} className="border rounded-xl p-4 bg-white dark:bg-gray-900">
                 <div className="mb-3 pb-2 border-b">
                   <Link
-                    href={`/names/${generateSlug(n.name, n.language)}`}
+                    href={namePath(n)}
                     className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold text-lg"
                   >
                     {n.name}

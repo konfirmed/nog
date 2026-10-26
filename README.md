@@ -19,3 +19,11 @@ Contributions are welcome! Please submit a pull request or open an issue to sugg
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## Production configuration and verification
+
+The canonical site origin is `https://namesofgod.kanmiobasa.com`. `VERCEL_URL` is intentionally ignored. Development may set `NEXT_PUBLIC_SITE_URL=http://localhost:3000` (or another local origin); production always uses the canonical domain. Cloudflare must have `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` configured for public read. Never expose a service-role key.
+
+Use the checked-in npm lockfile: `npm ci`, `npm run typecheck`, `npm test`, `npm run build`, `npm run cf:build`. Verify the canonical domain and Supabase environment in Cloudflare before manually deploying with `npm run cf:deploy` using the project's configured Wrangler account. `supabase/seed.sql` contains `TRUNCATE` and must never be executed against production. The daily devotional uses UTC calendar days and stable UUID ordering; additions or removals can shift subsequent selections.
+
+See [content integrity review](docs/content-integrity.md) for editorial follow-up and read-only live checks.

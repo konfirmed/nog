@@ -1,3 +1,4 @@
+import { siteUrl } from '@/lib/site-url';
 import { Metadata } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import { CompareClient } from '@/components/compare-client';
@@ -5,9 +6,7 @@ import { BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const dynamic = 'force-dynamic';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = siteUrl;
 
 export const metadata: Metadata = {
   title: 'Compare Divine Names | NAMES of G_D',

@@ -1,13 +1,13 @@
+import { siteUrl } from '@/lib/site-url';
 import { Metadata } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
+import { namePath } from '@/lib/slug';
 import { CollectionPageJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const dynamic = 'force-dynamic';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = siteUrl;
 
 export const metadata: Metadata = {
   title: 'All Names of G_D | NAMES of G_D Across Cultures',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export default async function NamesIndexPage() {
   const { data, error } = await supabase
     .from('names_of_god')
-    .select('id, name');
+    .select('id, name, language');
 
   if (error) {
     console.error('Error fetching names:', error);
@@ -47,7 +47,7 @@ export default async function NamesIndexPage() {
         <ul className="list-disc ml-4">
           {data?.map((n) => (
             <li key={n.id} className="my-1">
-              <Link href={`/names/${n.id}`} className="text-blue-600 hover:underline">
+              <Link href={namePath(n)} className="text-blue-600 hover:underline">
                 {n.name}
               </Link>
             </li>
