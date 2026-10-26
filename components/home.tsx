@@ -158,6 +158,15 @@ export default function Home({
         </div>
       </div>
 
+      <section className="mb-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-950 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-50 sm:p-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-emerald-800 dark:text-emerald-300">Start learning · Free 7-day journey</p>
+        <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">Seven names. Seven days. A deeper understanding.</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-6">Learn what names and titles reveal about God through Scripture, reflection, and short memory questions. Study at your pace—no account needed.</p>
+        <Link href="/learn/7-days" className="mt-5 inline-flex rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-900">
+          Start the seven-day journey →
+        </Link>
+      </section>
+
       {todayName && <DailyDevotional name={todayName} />}
 
       {/* Search */}
