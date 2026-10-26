@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation';
+import { siteUrl } from '@/lib/site-url';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import Link from 'next/link';
@@ -9,18 +10,17 @@ import { MiniRelationshipGraph } from '@/components/mini-relationship-graph';
 import { EtymologyBreakdownDisplay } from '@/components/etymology-breakdown';
 import { NamePageJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 import { AudioPlayer } from '@/components/audio-player';
-import { isUUID, generateSlug, findBySlug } from '@/lib/slug';
+import { generateSlug, idFromIdentifier, namePath } from '@/lib/slug';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = siteUrl;
 
 async function getNameData(idOrSlug: string) {
-  if (isUUID(idOrSlug)) {
+  const directId = idFromIdentifier(idOrSlug);
+  if (directId) {
     const { data, error } = await supabase
       .from('names_of_god')
       .select('*')
-      .eq('id', idOrSlug)
+      .eq('id', directId)
       .single();
     if (error || !data) return null;
     return data;
@@ -32,7 +32,8 @@ async function getNameData(idOrSlug: string) {
 
   if (!allNamesForSlug) return null;
 
-  const match = findBySlug(allNamesForSlug, idOrSlug);
+  const matches = allNamesForSlug.filter(n => generateSlug(n.name, n.language) === idOrSlug);
+  const match = matches.length === 1 ? matches[0] : null;
   if (!match) return null;
 
   const { data, error } = await supabase
@@ -55,7 +56,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     };
   }
 
-  const slug = generateSlug(data.name, data.language);
+  const slug = namePath(data).split('/').pop()!;
   const canonicalUrl = `${defaultUrl}/names/${slug}`;
   const language = data.language.charAt(0).toUpperCase() + data.language.slice(1);
 
@@ -85,8 +86,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const data = await getNameData(idOrSlug);
   if (!data) return notFound();
 
+  const canonicalPath = namePath(data);
+  if (idOrSlug !== canonicalPath.split('/').pop()) permanentRedirect(canonicalPath);
   const actualId = data.id;
-  const slug = generateSlug(data.name, data.language);
+  const slug = namePath(data).split('/').pop()!;
   const language = data.language.charAt(0).toUpperCase() + data.language.slice(1);
 
   // Fetch related names for the list
@@ -181,7 +184,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {related.map((rel: any) => (
               <li key={rel.id}>
                 <Link
-                  href={`/names/${generateSlug(rel.name, rel.language)}`}
+                  href={namePath(rel)}
                   className="hover:underline"
                 >
                   {rel.name} <span className="text-gray-500 dark:text-gray-400">({rel.language})</span>

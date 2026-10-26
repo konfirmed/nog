@@ -11,7 +11,7 @@ import {
   type NameRecord,
   type GraphData,
 } from "@/lib/graph-utils";
-import { generateSlug } from "@/lib/slug";
+import { namePath } from "@/lib/slug";
 import { useI18n } from "./i18n-provider";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -78,7 +78,7 @@ export function MiniRelationshipGraph({
   const handleNodeClick = useCallback(
     (node: { id?: string | number; name?: string; language?: string }) => {
       if (node.id && node.id !== centerId && node.name && node.language) {
-        router.push(`/names/${generateSlug(node.name, node.language)}`);
+        router.push(namePath({ id: String(node.id), name: node.name, language: node.language }));
       }
     },
     [router, centerId]

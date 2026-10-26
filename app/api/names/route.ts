@@ -7,10 +7,17 @@ const ITEMS_PER_PAGE = 24;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+  const pageValue = searchParams.get('page') || '1';
+  if (!/^[1-9]\d*$/.test(pageValue) || !Number.isSafeInteger(Number(pageValue)) || Number(pageValue) > 100000) {
+    return NextResponse.json({ error: 'Invalid page' }, { status: 400 });
+  }
+  const page = Number(pageValue);
   const language = searchParams.get('language') || null;
   const query = searchParams.get('q') || '';
   const attributes = searchParams.get('attributes')?.split(',').filter(Boolean) || [];
+  if (query.length > 100 || /[(),.%*]/.test(query) || (language && !/^[a-z_]{1,30}$/.test(language)) || attributes.length > 10 || attributes.some(a => a.length > 50)) {
+    return NextResponse.json({ error: 'Invalid filters' }, { status: 400 });
+  }
 
   // Build query
   let dbQuery = supabase
@@ -43,7 +50,8 @@ export async function GET(request: NextRequest) {
     .range(from, to);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Names query failed:', error.message);
+    return NextResponse.json({ error: 'Names query failed' }, { status: 500 });
   }
 
   return NextResponse.json({

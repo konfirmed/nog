@@ -96,3 +96,19 @@ export function isUUID(str: string): boolean {
 export function findBySlug(names: Array<{ id: string; name: string; language: string }>, slug: string): { id: string; name: string; language: string } | undefined {
   return names.find(n => generateSlug(n.name, n.language) === slug);
 }
+
+/** The UUID is immutable identity; the readable prefix may change without collisions. */
+export function canonicalNameSlug(name: { id: string; name: string; language: string }): string {
+  const readable = generateSlug(name.name, name.language) || `${name.name.normalize('NFKC').toLowerCase().replace(new RegExp('[^\\p{L}\\p{N}]+', 'gu'), '-').replace(/^-|-$/g, '') || 'name'}-${name.language}`;
+  return `${readable}-${name.id.toLowerCase()}`;
+}
+
+export function namePath(name: { id: string; name: string; language: string }): string {
+  return `/names/${canonicalNameSlug(name)}`;
+}
+
+export function idFromIdentifier(identifier: string): string | null {
+  if (isUUID(identifier)) return identifier.toLowerCase();
+  const match = identifier.match(/-([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})$/i);
+  return match ? match[1].toLowerCase() : null;
+}

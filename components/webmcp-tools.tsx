@@ -84,14 +84,12 @@ export function WebMCPTools() {
         required: ['name_id'],
       },
       async execute(args: { name_id: string }) {
-        const res = await fetch(`/api/names?q=`);
-        const data = await res.json();
-        const name = data.names.find((n: any) => n.id === args.name_id);
-        if (!name) {
+        const res = await fetch(`/api/names/${encodeURIComponent(args.name_id)}`);
+        if (!res.ok) {
           return { content: [{ type: 'text', text: 'Name not found' }] };
         }
         return {
-          content: [{ type: 'text', text: JSON.stringify(name) }],
+          content: [{ type: 'text', text: JSON.stringify(await res.json()) }],
         };
       },
     });

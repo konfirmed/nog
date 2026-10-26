@@ -1,8 +1,7 @@
+import { siteUrl } from '@/lib/site-url';
 import { MetadataRoute } from 'next';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : 'http://localhost:3000';
+const defaultUrl = siteUrl;
 
 export default function robots(): MetadataRoute.Robots {
   return {
