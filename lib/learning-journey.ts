@@ -215,9 +215,10 @@ export function getLearningLesson(day: number | string | undefined): LearningLes
 
 export function normalizeCompletedDays(days: unknown): number[] {
   if (!Array.isArray(days)) return [];
-  return [...new Set(days.filter((value): value is number =>
+  return days.filter((value): value is number =>
     typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= LEARNING_LESSONS.length
-  ))].sort((a, b) => a - b);
+  ).filter((value, index, validDays) => validDays.indexOf(value) === index)
+    .sort((a, b) => a - b);
 }
 
 export function readLearningProgress(raw: string | null): number[] {
