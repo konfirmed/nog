@@ -99,7 +99,9 @@ export function findBySlug(names: Array<{ id: string; name: string; language: st
 
 /** The UUID is immutable identity; the readable prefix may change without collisions. */
 export function canonicalNameSlug(name: { id: string; name: string; language: string }): string {
-  const readable = generateSlug(name.name, name.language) || `${name.name.normalize('NFKC').toLowerCase().replace(new RegExp('[^\\p{L}\\p{N}]+', 'gu'), '-').replace(/^-|-$/g, '') || 'name'}-${name.language}`;
+  // A Unicode path becomes a long percent-encoded URL in share composers.
+  // Use the language as an ASCII fallback; the UUID remains the stable identity.
+  const readable = generateSlug(name.name, name.language) || name.language.replace(/[^a-z0-9-]/gi, '-');
   return `${readable}-${name.id.toLowerCase()}`;
 }
 
