@@ -24,8 +24,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       description: 'Read, reflect and remember the names and attributes of God in seven short lessons.',
       url,
       type: 'article',
+      images: [{ url: siteUrl + '/opengraph-image', width: 1200, height: 630, alt: 'NAMES of G_D Across Cultures' }],
     },
-    twitter: { card: 'summary_large_image' },
+    twitter: {
+      card: 'summary_large_image',
+      images: [siteUrl + '/twitter-image'],
+    },
   };
 }
 
