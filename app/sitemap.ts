@@ -2,6 +2,7 @@ import { siteUrl, absoluteUrl } from '@/lib/site-url';
 import { MetadataRoute } from 'next';
 import { supabase } from '@/utils/supabase/client';
 import { namePath } from '@/lib/slug';
+import { LEARNING_LESSONS } from '@/lib/learning-journey';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +39,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    ...LEARNING_LESSONS.map((lesson) => ({
+      url: `${defaultUrl}/learn/7-days${lesson.day === 1 ? '' : `?day=${lesson.day}`}`,
+      changeFrequency: 'monthly' as const,
+      priority: lesson.day === 1 ? 0.9 : 0.7,
+    })),
     ...nameEntries,
   ];
 }
