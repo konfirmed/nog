@@ -3,11 +3,54 @@ import assert from 'node:assert/strict';
 import {
   LEARNING_LESSONS,
   LEARNING_PROGRESS_KEY,
+  catalogueLookup,
   getLearningLesson,
   normalizeCompletedDays,
   readLearningProgress,
   writeLearningProgress,
+  uniqueCatalogueMatch,
 } from '../lib/learning-journey.ts';
+
+// Public catalogue snapshot inspected 2026-11-03; fixtures are not a live DB check.
+const catalogue = [
+  { name: 'אֱלֹהִים', language: 'hebrew', meaning: 'God / Mighty One' },
+  { name: 'יְהוָה יִרְאֶה', language: 'hebrew', meaning: 'The Lord Will Provide' },
+  { name: 'יְהוָה רֹפְאֶךָ', language: 'hebrew', meaning: 'The Lord Who Heals You' },
+  { name: 'יְהוָה שָׁלוֹם', language: 'hebrew', meaning: 'The Lord is Peace' },
+  { name: 'Y Bugail', language: 'welsh', meaning: 'The Shepherd' },
+  { name: 'אֵל עֶלְיוֹן', language: 'hebrew', meaning: 'God Most High' },
+  { name: 'Aláàánú', language: 'yoruba', meaning: 'The Merciful One' },
+];
+
+test('all seven lesson lookups use the intended catalogue identity', () => {
+  const expected = [
+    ['אֱלֹהִים', 'hebrew'], ['יְהוָה יִרְאֶה', 'hebrew'],
+    ['יְהוָה רֹפְאֶךָ', 'hebrew'], ['יְהוָה שָׁלוֹם', 'hebrew'],
+    ['Y Bugail Da', 'welsh'], ['אֵל עֶלְיוֹן', 'hebrew'], ['Aláàánú', 'yoruba'],
+  ];
+  for (const [index, lesson] of LEARNING_LESSONS.entries()) {
+    const lookup = catalogueLookup(lesson);
+    assert.deepEqual([lookup.name, lookup.language], expected[index]);
+    const matches = catalogue.filter(entry => entry.name === lookup.name && entry.language === lookup.language);
+    if (lesson.day === 5) {
+      // The related, broader Y Bugail must not be presented as this exact title.
+      assert.equal(uniqueCatalogueMatch(matches), null);
+    } else {
+      assert.equal(matches.length, 1, `Day ${lesson.day} must match uniquely`);
+      assert.equal(uniqueCatalogueMatch(matches)?.name, expected[index][0]);
+    }
+  }
+});
+
+test('ambiguous or absent catalogue results do not produce a link', () => {
+  assert.equal(uniqueCatalogueMatch(null), null);
+  assert.equal(uniqueCatalogueMatch([]), null);
+  assert.equal(uniqueCatalogueMatch([catalogue[0], catalogue[0]]), null);
+  const lookup = catalogueLookup(LEARNING_LESSONS[0]);
+  assert.equal(uniqueCatalogueMatch([{ ...catalogue[0], language: 'welsh' }].filter(
+    entry => entry.name === lookup.name && entry.language === lookup.language,
+  )), null);
+});
 
 test('pilot has seven distinct sequential Scripture lessons', () => {
   assert.equal(LEARNING_LESSONS.length, 7);
@@ -40,3 +83,4 @@ test('persisted progress is sanitized, deduplicated, versioned and sorted', () =
   }
   assert.deepEqual(readLearningProgress(null), []);
 });
+

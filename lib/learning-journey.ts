@@ -10,6 +10,7 @@ export type LearningLesson = Readonly<{
   theme: string;
   name: string;
   language: string;
+  catalogueName?: string;
   meaning: string;
   classification: string;
   scripture: string;
@@ -22,8 +23,8 @@ export type LearningLesson = Readonly<{
   recall?: LearningQuestion;
 }>;
 
-// Short, Scripture-anchored pilot lessons. Catalogue links resolve by name and
-// language at request time: never hard-code production Supabase IDs.
+// Short, Scripture-anchored pilot lessons. Catalogue links resolve by exact
+// catalogue name and language at request time, not production Supabase IDs.
 // An editorial review of original-language pronunciation is still required.
 export const LEARNING_LESSONS: readonly LearningLesson[] = [
   {
@@ -31,6 +32,7 @@ export const LEARNING_LESSONS: readonly LearningLesson[] = [
     theme: 'The Creator',
     name: 'Elohim',
     language: 'hebrew',
+    catalogueName: 'אֱלֹהִים',
     meaning: 'God',
     classification: 'Hebrew biblical designation',
     scripture: 'Genesis 1:1–5',
@@ -51,6 +53,7 @@ export const LEARNING_LESSONS: readonly LearningLesson[] = [
     theme: 'The Provider',
     name: 'YHWH Yireh',
     language: 'hebrew',
+    catalogueName: 'יְהוָה יִרְאֶה',
     meaning: 'The LORD will provide',
     classification: 'Name given to a place in Scripture',
     scripture: 'Genesis 22:1–14',
@@ -77,6 +80,7 @@ export const LEARNING_LESSONS: readonly LearningLesson[] = [
     theme: 'The One Who Heals',
     name: 'YHWH Rapha',
     language: 'hebrew',
+    catalogueName: 'יְהוָה רֹפְאֶךָ',
     meaning: 'The LORD who heals',
     classification: 'Biblical self-description',
     scripture: 'Exodus 15:22–26',
@@ -103,6 +107,7 @@ export const LEARNING_LESSONS: readonly LearningLesson[] = [
     theme: 'The LORD Is Peace',
     name: 'YHWH Shalom',
     language: 'hebrew',
+    catalogueName: 'יְהוָה שָׁלוֹם',
     meaning: 'The LORD is peace',
     classification: 'Name given to an altar in Scripture',
     scripture: 'Judges 6:11–24',
@@ -155,6 +160,7 @@ export const LEARNING_LESSONS: readonly LearningLesson[] = [
     theme: 'God Most High',
     name: 'El Elyon',
     language: 'hebrew',
+    catalogueName: 'אֵל עֶלְיוֹן',
     meaning: 'God Most High',
     classification: 'Hebrew biblical title',
     scripture: 'Genesis 14:18–22',
@@ -206,6 +212,14 @@ export const LEARNING_LESSONS: readonly LearningLesson[] = [
 
 export const LEARNING_PROGRESS_KEY = 'nog:seven-day-learning:v1';
 
+export function catalogueLookup(lesson: LearningLesson) {
+  return { name: lesson.catalogueName ?? lesson.name, language: lesson.language };
+}
+
+export function uniqueCatalogueMatch<T>(entries: readonly T[] | null): T | null {
+  return entries?.length === 1 ? entries[0] : null;
+}
+
 export function getLearningLesson(day: number | string | undefined): LearningLesson | null {
   const numericDay = typeof day === 'number' ? day : Number(day);
   return Number.isInteger(numericDay) && numericDay >= 1 && numericDay <= LEARNING_LESSONS.length
@@ -236,3 +250,4 @@ export function readLearningProgress(raw: string | null): number[] {
 export function writeLearningProgress(days: readonly number[]): string {
   return JSON.stringify({ version: 1, completed: normalizeCompletedDays([...days]) });
 }
+
