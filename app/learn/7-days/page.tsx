@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { LearningJourney } from '@/components/learning-journey';
-import { getLearningLesson } from '@/lib/learning-journey';
+import { catalogueLookup, getLearningLesson, uniqueCatalogueMatch } from '@/lib/learning-journey';
 import { siteUrl } from '@/lib/site-url';
 import { supabase } from '@/utils/supabase/client';
 import { notFound } from 'next/navigation';
@@ -37,17 +37,19 @@ export default async function Page({ searchParams }: Props) {
   const params = await searchParams;
   const lesson = getLearningLesson(typeof params.day === 'string' ? params.day : '1');
   if (!lesson) notFound();
+  const lookup = catalogueLookup(lesson);
 
   const { data, error } = await supabase
     .from('names_of_god')
     .select('id, name, language, pronunciation, audio_url')
-    .eq('name', lesson.name)
-    .eq('language', lesson.language)
+    .eq('name', lookup.name)
+    .eq('language', lookup.language)
     .limit(2);
 
   if (error) console.error('Learning catalogue lookup failed:', error.message);
   // Never assume identity when multiple catalogue entries share a name.
-  const catalogue = !error && data?.length === 1 ? data[0] : null;
+  const catalogue = error ? null : uniqueCatalogueMatch(data);
 
   return <LearningJourney key={lesson.day} lesson={lesson} catalogue={catalogue} />;
 }
+
