@@ -7,6 +7,7 @@ This repository explores various names and attributes of G_D, providing insights
 - [Purpose](#purpose)
 - [Contributing](#contributing)
 - [License](#license)
+- [Production configuration and verification](#production-configuration-and-verification)
 
 ## Introduction
 The names of G_D hold deep significance and are studied across various traditions. This repository aims to document and share knowledge about these names.
@@ -18,7 +19,7 @@ The purpose of this repository is to serve as a resource for learning and unders
 Contributions are welcome! Please submit a pull request or open an issue to suggest changes or additions.
 
 ## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+No license file is currently included, so reuse terms have not been specified.
 
 ## Production configuration and verification
 
